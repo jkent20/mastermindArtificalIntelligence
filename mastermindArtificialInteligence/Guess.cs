@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace mastermindArtificialInteligence
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            
+    class Guess {
+        private string[] colours = new string[4];
 
-
+        public string[] Colours {
+            get { return colours; }
+            set { colours = value; }
         }
     }
 }
