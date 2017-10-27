@@ -14,8 +14,11 @@ namespace mastermindArtificialInteligence
             Board board = new Board();
             int roundCounter = 0;
 
-            while (board.Finished == false) {
-                roundCounter++;
+            board.RandomAnswer();
+
+            board.PrintBoard();
+
+            while (roundCounter < 12) {
 
                 string[] inputs = new string[4];
 
@@ -25,15 +28,15 @@ namespace mastermindArtificialInteligence
                     inputs[i] = userInputAndMenu.AcceptUserInput();
                 }
 
-                Guess guess = new Guess(inputs[0], inputs[1], inputs[2], inputs[3]);
-                Console.WriteLine(string.Join(". ", guess.Colours));
+                Code guess = new Code(inputs[0], inputs[1], inputs[2], inputs[3]);
 
+                board.SaveGuess(guess, roundCounter);
                 Response response = board.TestGuess(guess);
 
-                response.PrintResponse(response.Responses);
-                if (roundCounter == 12) {
-                    break;
-                }
+
+                response.PrintResponse(response.Responses, board, roundCounter);
+                board.PrintBoard();
+                roundCounter++;
             }
         }
     }

@@ -25,8 +25,9 @@ namespace mastermindArtificialInteligence {
             string result = ConvertInput(input);
             if (result == "error") {
                 Console.WriteLine("Please choose an option from the list. e.g. Green");
-                AcceptUserInput();
+                result = AcceptUserInput();
             }
+
             return result;
         }
         

@@ -6,11 +6,26 @@ using System.Threading.Tasks;
 
 namespace mastermindArtificialInteligence {
     class Board {
-        private Guess answer = new Guess();
-        private bool finished;
+        private Code answer = new Code();
+        private string[][] rounds = new string[][] {
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+            new string[8] {"", "", "", "", "", "", "", ""},
+        };
+        private int boardWidth = 80;
 
-        public bool Finished {
-            get { return finished; }
+        public string[][] Rounds {
+            get { return rounds;  }
+            set { rounds = value; }
         }
 
         public void RandomAnswer() {
@@ -27,33 +42,81 @@ namespace mastermindArtificialInteligence {
             return;
         }
 
-        public Response TestGuess(Guess guess) {
+        public void SaveGuess(Code guess, int round) {
+            for (int i = 0; i < guess.Colours.Length; i++) {
+                rounds[round][i] = guess.Colours[i];
+            }
+        }
+
+        public Response TestGuess(Code guess) {
 
             Response response = new Response();
 
-            int j = 0;
-            int n = 0;
-
-            for (int i = 0; i < guess.Colours.Length; i++) {
-
-                
-                if (answer.Colours.Contains(guess.Colours[i])) {
+            for (int i = 0; i < answer.Colours.Length; i++) {
+                for (int j = 0; j < guess.Colours.Length; j++) {
                     if (answer.Colours[i] == guess.Colours[i]) {
-                        response.Responses[j] = "Black";
-                        n++;
+                        response.BlackPegs++;
                     }
                     else {
-                        response.Responses[j] = "White";
+                        response.WhitePegs++;
                     }
                     j++;
                 }
             }
 
-            if (n == 4 ) {
-                finished = true;
+            for (int i = 0; i < response.BlackPegs; i++) {
+                response.Responses[i] = "Black";
+            }
+            for (int i = 0; i < response.WhitePegs; i++) {
+                response.Responses[i + response.BlackPegs] = "White";
+            }
+            return response;
+        }
+
+        public void PrintBoard() {
+
+            string[] headers = { "Guesses", "Responses" };
+            
+            PrintLine();
+            PrintRow(headers);
+            PrintLine();
+            for (int i = 0; i < rounds.Length; i++) {
+                PrintRow(rounds[i]);
             }
 
-            return response;
+            PrintLine();
+
+        }
+
+        private void PrintLine() {
+            Console.WriteLine(new string('-', boardWidth));
+        }
+
+        private void PrintRow(params string[] columns) {
+            int width = (boardWidth - columns.Length) / columns.Length;
+            string row = "|";
+            int idx = 0;
+
+            foreach (string column in columns) {
+                idx++;
+                row += AlignCentre(column, width) + "|";
+                if (idx == (columns.Length / 2)) {
+                    row += "|";
+                }
+            }
+
+            Console.WriteLine(row);
+        }
+
+        private string AlignCentre(string text, int width) {
+            text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
+
+            if (string.IsNullOrEmpty(text)) {
+                return new string(' ', width);
+            }
+            else {
+                return text.PadRight(width - (width - text.Length) / 2).PadLeft(width);
+            }
         }
         
     }
