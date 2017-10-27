@@ -11,7 +11,7 @@ namespace mastermindArtificialInteligence
         static void Main(string[] args)
         {
             
-
+            
 
         }
     }
