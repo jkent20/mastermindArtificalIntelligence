@@ -12,5 +12,9 @@ namespace mastermindArtificialInteligence {
             get { return responses; }
             set { value = responses; }
         }
+
+        public void PrintResponse(string[] toPrint) {
+            Console.WriteLine(string.Join(". ", toPrint));
+        }
     }
 }

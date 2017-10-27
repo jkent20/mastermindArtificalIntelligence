@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace mastermindArtificialInteligence {
     class Board {
-        private Guess answer;
+        private Guess answer = new Guess();
+        private bool finished;
+
+        public bool Finished {
+            get { return finished; }
+        }
 
         public void RandomAnswer() {
             // generate randon answer here
-            string[] availableColours = ["Red", "Blue", "Green", "Purple", "Orange", "Yellow"];
+            string[] availableColours = { "Red", "Blue", "Green", "Purple", "Orange", "Yellow" };
             Random rng = new Random();
 
 
@@ -22,26 +27,30 @@ namespace mastermindArtificialInteligence {
             return;
         }
 
-        public Response GetResponse {
-            get { return response; }
-        }
-
         public Response TestGuess(Guess guess) {
-            
-            Response response;
-            int k = 0;
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    if (answer.Colours[i] == guess.Colours[j]) {
-                        if (i == j) {
-                            response.Responses[k] = "Black";
-                        }
-                        else {
-                            response.Responses[k] = "White";
-                        }
-                        k++;
+
+            Response response = new Response();
+
+            int j = 0;
+            int n = 0;
+
+            for (int i = 0; i < guess.Colours.Length; i++) {
+
+                
+                if (answer.Colours.Contains(guess.Colours[i])) {
+                    if (answer.Colours[i] == guess.Colours[i]) {
+                        response.Responses[j] = "Black";
+                        n++;
                     }
+                    else {
+                        response.Responses[j] = "White";
+                    }
+                    j++;
                 }
+            }
+
+            if (n == 4 ) {
+                finished = true;
             }
 
             return response;

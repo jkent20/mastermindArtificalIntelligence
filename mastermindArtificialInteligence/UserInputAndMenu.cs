@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace mastermindArtificialInteligence {
     class UserInputAndMenu {
-        private string = ["Red", "Blue", "Green", "Purple", "Orange", "Yellow"];
+        private string[] availableColours = { "Red", "Blue", "Green", "Purple", "Orange", "Yellow" };
 
         public void DrawMenu() {
             Console.WriteLine("The possible colours are as follows:");
@@ -19,17 +19,32 @@ namespace mastermindArtificialInteligence {
         }
 
         public string AcceptUserInput() {
-            Console.WriteLine("Please enter your colour choice for position one");
+            Console.WriteLine("Please enter your colour choice");
             var input = Console.ReadLine();
 
-            this.ConvertInput(input);
-            return;
+            string result = ConvertInput(input);
+            if (result == "error") {
+                Console.WriteLine("Please choose an option from the list. e.g. Green");
+                AcceptUserInput();
+            }
+            return result;
         }
         
         public string ConvertInput(string input) {
             bool successful = Int32.TryParse(input, out int inputInt);
-            if (successful) {
-
+            if (successful && inputInt <= availableColours.Length) {
+                return availableColours[inputInt - 1];
+            }
+            else if (successful && inputInt > availableColours.Length) {
+                return "error";
+            }
+            else {
+                if (availableColours.Contains(input)) {
+                    return input;
+                }
+                else {
+                    return "error";
+                }
             }
         }
 

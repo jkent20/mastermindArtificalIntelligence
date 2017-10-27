@@ -9,6 +9,10 @@ namespace mastermindArtificialInteligence
     class Guess {
         private string[] colours = new string[4];
 
+        public Guess() {
+
+        }
+
         public Guess(string colourOne, string colourTwo, string colourThree, string colourFour) {
             this.colours[0] = colourOne;
             this.colours[1] = colourTwo;
