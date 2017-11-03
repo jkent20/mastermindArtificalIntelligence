@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 namespace mastermindArtificialInteligence {
     class Board {
         private Code answer = new Code();
+        private string[] tempAnswer = new string[4];
+        private string[] tempGuess = new string[4]; 
         private string[][] rounds = new string[][] {
             new string[8] {"", "", "", "", "", "", "", ""},
             new string[8] {"", "", "", "", "", "", "", ""},
@@ -22,6 +25,20 @@ namespace mastermindArtificialInteligence {
             new string[8] {"", "", "", "", "", "", "", ""},
         };
         private int boardWidth = 80;
+        private bool victory = false;
+        private int numberOfColours = 6;
+
+        public int NumberOfColours {
+            get { return numberOfColours; }
+        }
+
+        public int BoardWidth {
+            get { return boardWidth; }
+        }
+
+        public bool Victory {
+            get { return victory; }
+        }
 
         public string[][] Rounds {
             get { return rounds;  }
@@ -48,27 +65,63 @@ namespace mastermindArtificialInteligence {
             }
         }
 
-        public Response TestGuess(Code guess) {
-
-            Response response = new Response();
-
-            for (int i = 0; i < answer.Colours.Length; i++) {
-                for (int j = 0; j < guess.Colours.Length; j++) {
-                    if (answer.Colours[i] == guess.Colours[i]) {
-                        response.BlackPegs++;
-                    }
-                    else {
-                        response.WhitePegs++;
-                    }
-                    j++;
+        public int TestForBlackMatches(string[] guess, string[] answer) {
+            int blackPegs = 0;
+            for (int i = 0; i < guess.Length; i++) {
+                if (answer[i] == guess[i]) {
+                    answer[i] = "Guess Matched";
+                    guess[i] = "Answer Matched";
+                    blackPegs++;
                 }
             }
+            return blackPegs;
+        }
+
+        public int TestForWhiteMatches(string[] guess, string[] answer) {
+            int whitePegs = 0;
+            for (int i = 0; i < answer.Length; i++) {
+                for (int j = 0; j < guess.Length; j++) {
+                    if (answer[i] == guess[j]) {
+                        answer[i] = "Part Guess Matched";
+                        guess[j] = "Part Answer Matched";
+                        whitePegs++;
+                    }
+                }
+            }
+            return whitePegs;
+        }
+
+        public string[] saveInTempArray(string[] input) {
+
+            string[] value = new string[input.Length]; 
+
+            for (int i = 0; i < input.Length; i++) {
+                value[i] = input[i];
+            }
+            return value;
+        }
+
+        public Response TestGuess(Code guess) {
+            Console.WriteLine(string.Join(". ", answer.Colours));
+
+            tempAnswer = saveInTempArray(answer.Colours);
+            tempGuess = saveInTempArray(guess.Colours);
+
+            Response response = new Response {
+                BlackPegs = TestForBlackMatches(tempGuess, tempAnswer),
+                WhitePegs = TestForWhiteMatches(tempGuess, tempAnswer)
+            };
 
             for (int i = 0; i < response.BlackPegs; i++) {
                 response.Responses[i] = "Black";
             }
             for (int i = 0; i < response.WhitePegs; i++) {
                 response.Responses[i + response.BlackPegs] = "White";
+            }
+
+
+            if (response.BlackPegs == 4) {
+                victory = true;
             }
             return response;
         }

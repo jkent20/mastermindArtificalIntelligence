@@ -37,7 +37,27 @@ namespace mastermindArtificialInteligence
                 response.PrintResponse(response.Responses, board, roundCounter);
                 board.PrintBoard();
                 roundCounter++;
+                if (board.Victory) {
+                    break;
+                }
             }
+
+            Console.WriteLine("");
+            Console.WriteLine(new string('=', board.BoardWidth));
+            Console.WriteLine(new string('=', board.BoardWidth));
+
+            if (board.Victory == false) {
+                Console.WriteLine("You failed!");
+            }
+            else {
+                Console.WriteLine("Congratulations");
+                Console.WriteLine("You won in {0} rounds", roundCounter);
+            }
+
+            Console.WriteLine(new string('=', board.BoardWidth));
+            Console.WriteLine(new string('=', board.BoardWidth));
+
+            Console.ReadLine();
         }
     }
 }

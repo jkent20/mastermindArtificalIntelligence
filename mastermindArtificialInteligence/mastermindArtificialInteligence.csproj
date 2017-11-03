@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Code.cs" />
+    <Compile Include="CodeBreaker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Response.cs" />
