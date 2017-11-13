@@ -10,8 +10,10 @@ namespace mastermindArtificialInteligence
     {
         static void Main(string[] args)
         {
+            int numOfColours = 6;
             UserInputAndMenu userInputAndMenu = new UserInputAndMenu();
             Board board = new Board();
+            CodeBreaker codeBreaker = new CodeBreaker(numOfColours);
             int roundCounter = 0;
 
             board.RandomAnswer();
@@ -24,9 +26,9 @@ namespace mastermindArtificialInteligence
 
                 userInputAndMenu.DrawMenu();
 
-                for (int i = 0; i < inputs.Length; i++) {
-                    inputs[i] = userInputAndMenu.AcceptUserInput();
-                }
+
+                inputs = userInputAndMenu.AcceptUserInput(codeBreaker.MakeGuess(roundCounter));
+
 
                 Code guess = new Code(inputs[0], inputs[1], inputs[2], inputs[3]);
 
@@ -36,6 +38,9 @@ namespace mastermindArtificialInteligence
 
                 response.PrintResponse(response.Responses, board, roundCounter);
                 board.PrintBoard();
+
+                codeBreaker.UpdatePossibleCodes(guess, response, board, roundCounter);
+                Console.ReadLine();
                 roundCounter++;
                 if (board.Victory) {
                     break;

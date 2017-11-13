@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 namespace mastermindArtificialInteligence {
     class CodeBreaker {
         private int[][] possibleCodes;
-        private List<int[]> updatedCodeList;
+        private List<int[]> updatedCodeList = new List<int[]>();
         private int[] initialGuess = new int[] { 0, 0, 1, 1 };
         private string[] colours = new string[] { "Red", "Blue", "Green", "Purple", "Orange", "Yellow" };
-        private Board 
+        private string[] tempAnswer;
+        private string[] tempGuess;
+        private List<string[]> outcomes = new List<string[]>();
+        
 
         public CodeBreaker(int numColours) {
-            possibleCodes = new int[numColours ^ 4][];
+            possibleCodes = new int[1296][];
 
             int i = 0;
 
@@ -27,10 +30,9 @@ namespace mastermindArtificialInteligence {
                     }
                 }
             }
-            Console.WriteLine(possibleCodes.Length);
         }
 
-        public string[] makeGuess(int roundNum, string[] response) {
+        public string[] MakeGuess(int roundNum) {
             string[] guess = new string[4];
 
             if (roundNum == 0) {
@@ -41,39 +43,171 @@ namespace mastermindArtificialInteligence {
                 return guess;
             }
             // insert here guess that will remove the most values in possibleCodes
-            
+            return MinCombination();                       
 
         }
 
-        public void updatePossibleCodes(string[] guess, string[] response, Board board) {
+        public string[] MinCombination() {
 
-            Response comparedResponse = new Response();
-            Code comparisonCode = new Code();
+            int min = int.MaxValue;
+            int[] guess = new int[4];
+            string[] guessString = new string[4];
 
-            for (int i = 0; i < possibleCodes.Length; i++) {
-                string[] convertedGuess = new string[4];
+            for (int code = 0; code < possibleCodes.Length; code++) {
 
-                for (int j = 0; j < 4; j++) {
+                int max = 0;
 
-                    int colour = possibleCodes[i][j];
-                    convertedGuess[j] = colours[colour];
+                foreach (var outcome in outcomes) {
+                    int count = 0;
+
+                    for (int solution = 0; solution < possibleCodes.Length; solution++) {
+
+                        if (CompareCodeResponses(possibleCodes[code], possibleCodes[solution]) == outcome) {
+                            count++;
+                        }
+                    }
+                    if (count > max) {
+                        max = count;
+                    }
                 }
-
-                comparisonCode.setCode(convertedGuess);
-
-                comparedResponse = board.TestGuess(comparisonCode);
-
-                if (comparedResponse.Responses == response) {
-                    updatedCodeList.Add(possibleCodes[i]);
+                if (max < min) {
+                    min = max;
+                    guess = possibleCodes[code];
                 }
             }
 
-            possibleCodes = updatedCodeList.ToArray();
+            for (int i = 0; i < guess.Length; i++) {
+                guessString[i] = colours[guess[i]];
+            }
 
+            return guessString;
+        }
+
+        public void UpdatePossibleCodes(Code guess, Response response, Board board, int round) {
+
+            if (round == 0) {
+                return;
+            }
+
+            outcomes.Add(response.Responses);
+
+            for (int i = 0; i < possibleCodes.Length; i++) {
+                string[] comparisonGuess = new string[4];
+
+                for (int j = 0; j < possibleCodes[i].Length; j++) {
+                    int colour = possibleCodes[i][j];
+                    comparisonGuess[j] = colours[colour];
+                }
+
+
+                if (CompareCodeResponses(guess.Colours, comparisonGuess, response.Responses)) {
+                    updatedCodeList.Add(possibleCodes[i]);
+                }
+                
+
+            }
+            possibleCodes = updatedCodeList.ToArray();
+        }
+
+        public string[] CompareCodeResponses(int[] code, int[] solution) {
+            return TestComparison(code, solution);
+        }
+
+        public bool CompareCodeResponses(string[] guess, string[] comparisonGuess, string[] answerResponse) {
+
+            Response comparisonResponse = new Response();
+            comparisonResponse = TestComparison(guess, comparisonGuess);
+
+            return comparisonResponse.Responses == answerResponse;
+        }
+
+        public int TestForBlackMatches(string[] guess, string[] comparisonGuess) {
+            int blackPegs = 0;
+            for (int i = 0; i < guess.Length; i++) {
+                if (comparisonGuess[i] == guess[i]) {
+                    comparisonGuess[i] = "Guess Matched";
+                    guess[i] = "Answer Matched";
+                    blackPegs++;
+                }
+            }
+            return blackPegs;
+        }
+
+        public int TestForWhiteMatches(string[] guess, string[] comparisonGuess) {
+            int whitePegs = 0;
+            for (int i = 0; i < comparisonGuess.Length; i++) {
+                for (int j = 0; j < guess.Length; j++) {
+                    if (comparisonGuess[i] == guess[j]) {
+                        comparisonGuess[i] = "Part Guess Matched";
+                        guess[j] = "Part Answer Matched";
+                        whitePegs++;
+                    }
+                }
+            }
+            return whitePegs;
+        }
+
+        public string[] SaveInTempArray(string[] input) {
+
+            string[] value = new string[input.Length];
+
+            for (int i = 0; i < input.Length; i++) {
+                value[i] = input[i];
+            }
+            return value;
+        }
+
+        public string[] SaveInTempArray(int[] input) {
+            string[] value = new string[input.Length];
+
+            for (int i = 0; i < input.Length; i++) {
+                value[i] = input[i].ToString();
+            }
+            return value;
+        }
+
+        public Response TestComparison(string[] guess, string[] comparisonGuess) {
+
+            tempAnswer = SaveInTempArray(comparisonGuess);
+            tempGuess = SaveInTempArray(guess);
+
+            Response response = new Response {
+                BlackPegs = TestForBlackMatches(tempGuess, tempAnswer),
+                WhitePegs = TestForWhiteMatches(tempGuess, tempAnswer)
+            };
+
+            for (int i = 0; i < response.BlackPegs; i++) {
+                response.Responses[i] = "Black";
+            }
+            for (int i = 0; i < response.WhitePegs; i++) {
+                response.Responses[i + response.BlackPegs] = "White";
+            }
+
+            return response;
+        }
+
+        public string[] TestComparison(int[] code, int[] solution) {
+
+            tempAnswer = SaveInTempArray(solution);
+            tempGuess = SaveInTempArray(code);
+
+            Response response = new Response {
+                BlackPegs = TestForBlackMatches(tempGuess, tempAnswer),
+                WhitePegs = TestForWhiteMatches(tempGuess, tempAnswer)
+            };
+
+            for (int i = 0; i < response.BlackPegs; i++) {
+                response.Responses[i] = "Black";
+            }
+            for (int i = 0; i < response.WhitePegs; i++) {
+                response.Responses[i + response.BlackPegs] = "White";
+            }
+
+            return response.Responses;
         }
 
 
-    
+
 
     }
 }

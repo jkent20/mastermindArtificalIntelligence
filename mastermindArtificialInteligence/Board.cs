@@ -102,7 +102,6 @@ namespace mastermindArtificialInteligence {
         }
 
         public Response TestGuess(Code guess) {
-            Console.WriteLine(string.Join(". ", answer.Colours));
 
             tempAnswer = saveInTempArray(answer.Colours);
             tempGuess = saveInTempArray(guess.Colours);
