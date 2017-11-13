@@ -19,6 +19,12 @@ namespace mastermindArtificialInteligence
             colours[2] = colourThree;
             colours[3] = colourFour;
         }
+        
+        public void setCode(string[] colourArray) {
+            for (int i = 0; i < colourArray.Length; i++) {
+                colours[i] = colourArray[i];
+            }
+        }
 
         public string[] Colours {
             get { return colours; }
