@@ -31,13 +31,13 @@ namespace mastermindArtificialInteligence {
             return result;
         }
 
-        public string[] AcceptUserInput(string[] input) {
+        public string[] AcceptUserInput(int[] input) {
 
             string[] result = new string[4];
 
             for (int i = 0; i < input.Length; i++) {
-                result[i] = ConvertInput(input[i]); 
-            }
+                result[i] = availableColours[input[i]]; 
+            } 
 
             return result;
         } 

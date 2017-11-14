@@ -24,8 +24,10 @@ namespace mastermindArtificialInteligence
 
                 string[] inputs = new string[4];
 
-                userInputAndMenu.DrawMenu();
-
+                //userInputAndMenu.DrawMenu();
+                Console.WriteLine();
+                Console.WriteLine("Round {0}", roundCounter + 1);
+                Console.WriteLine();
 
                 inputs = userInputAndMenu.AcceptUserInput(codeBreaker.MakeGuess(roundCounter));
 
@@ -39,7 +41,7 @@ namespace mastermindArtificialInteligence
                 response.PrintResponse(response.Responses, board, roundCounter);
                 board.PrintBoard();
 
-                codeBreaker.UpdatePossibleCodes(guess, response, board, roundCounter);
+                codeBreaker.UpdatePossibleCodes(guess.Colours, response, board, roundCounter);
                 Console.ReadLine();
                 roundCounter++;
                 if (board.Victory) {

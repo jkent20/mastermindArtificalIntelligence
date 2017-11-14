@@ -32,7 +32,7 @@ namespace mastermindArtificialInteligence {
             }
         }
 
-        public string[] MakeGuess(int roundNum) {
+        public int[] MakeGuess(int roundNum) {
             string[] guess = new string[4];
 
             if (roundNum == 0) {
@@ -40,14 +40,14 @@ namespace mastermindArtificialInteligence {
                 guess[1] = colours[0];
                 guess[2] = colours[1];
                 guess[3] = colours[1];
-                return guess;
+                return initialGuess;
             }
             // insert here guess that will remove the most values in possibleCodes
             return MinCombination();                       
 
         }
 
-        public string[] MinCombination() {
+        public int[] MinCombination() {
 
             int min = int.MaxValue;
             int[] guess = new int[4];
@@ -62,7 +62,7 @@ namespace mastermindArtificialInteligence {
 
                     for (int solution = 0; solution < possibleCodes.Length; solution++) {
 
-                        if (CompareCodeResponses(possibleCodes[code], possibleCodes[solution]) == outcome) {
+                        if ( outcome.SequenceEqual(CompareCodeResponses(possibleCodes[code], possibleCodes[solution]))) {
                             count++;
                         }
                     }
@@ -80,45 +80,44 @@ namespace mastermindArtificialInteligence {
                 guessString[i] = colours[guess[i]];
             }
 
-            return guessString;
+            return guess;
         }
 
-        public void UpdatePossibleCodes(Code guess, Response response, Board board, int round) {
+        public void UpdatePossibleCodes(string[] guess, Response response, Board board, int round) {
 
-            if (round == 0) {
-                return;
-            }
+            
 
             outcomes.Add(response.Responses);
 
+            
             for (int i = 0; i < possibleCodes.Length; i++) {
-                string[] comparisonGuess = new string[4];
+                string[] comparisonAnswer = new string[4];
 
-                for (int j = 0; j < possibleCodes[i].Length; j++) {
-                    int colour = possibleCodes[i][j];
-                    comparisonGuess[j] = colours[colour];
+                for (int idx = 0; idx < possibleCodes[i].Length; idx++) {
+                    int colour = possibleCodes[i][idx];
+                    comparisonAnswer[idx] = colours[colour];
                 }
 
-
-                if (CompareCodeResponses(guess.Colours, comparisonGuess, response.Responses)) {
+                if (CompareCodeResponses(guess, comparisonAnswer, response.Responses)) {
                     updatedCodeList.Add(possibleCodes[i]);
                 }
-                
-
             }
+
+
             possibleCodes = updatedCodeList.ToArray();
+            updatedCodeList = new List<int[]>();
         }
 
         public string[] CompareCodeResponses(int[] code, int[] solution) {
             return TestComparison(code, solution);
         }
 
-        public bool CompareCodeResponses(string[] guess, string[] comparisonGuess, string[] answerResponse) {
+        public bool CompareCodeResponses(string[] guess, string[] comparisonAnswer, string[] answerResponse) {
 
             Response comparisonResponse = new Response();
-            comparisonResponse = TestComparison(guess, comparisonGuess);
+            comparisonResponse = TestComparison(guess, comparisonAnswer);
 
-            return comparisonResponse.Responses == answerResponse;
+            return comparisonResponse.Responses.SequenceEqual(answerResponse);
         }
 
         public int TestForBlackMatches(string[] guess, string[] comparisonGuess) {
