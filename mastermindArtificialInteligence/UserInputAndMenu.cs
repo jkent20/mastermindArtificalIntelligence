@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace mastermindArtificialInteligence {
     class UserInputAndMenu {
+        // initialise variables
         private string[] availableColours = { "Red", "Blue", "Green", "Purple", "Orange", "Yellow" };
 
+        // method to draw menu, can be used if user would like to play against the bot.
         public void DrawMenu() {
             Console.WriteLine("The possible colours are as follows:");
             Console.WriteLine("1) Red");
@@ -18,6 +20,7 @@ namespace mastermindArtificialInteligence {
             Console.WriteLine("6) Yellow");
         }
 
+        // accept user input, used with human user
         public string AcceptUserInput() {
             Console.WriteLine("Please enter your colour choice");
             var input = Console.ReadLine();
@@ -31,6 +34,7 @@ namespace mastermindArtificialInteligence {
             return result;
         }
 
+        // accept input overload for AI user - accepts array
         public string[] AcceptUserInput(int[] input) {
 
             string[] result = new string[4];
@@ -42,6 +46,7 @@ namespace mastermindArtificialInteligence {
             return result;
         } 
         
+        // converts input into correct format, checks for numbers and outputs words
         public string ConvertInput(string input) {
             bool successful = Int32.TryParse(input, out int inputInt);
             if (successful && inputInt <= availableColours.Length) {
