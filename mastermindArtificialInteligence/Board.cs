@@ -17,7 +17,7 @@ namespace mastermindArtificialInteligence {
         private bool victory = false;
         private int numberOfColours = 6;
 
-        // contructor, initialises jagged array to print board from.
+        // constructor, initialises jagged array to print board from.
         public Board(int numberOfRounds) {
 
             rounds = new string[numberOfRounds][];
